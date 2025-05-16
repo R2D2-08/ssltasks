@@ -26,3 +26,6 @@ ssh -i ~/id_rsa.pem -p 2222 omar@localhost
 ```
 - - The above leads me to believe that the ISP being used by the client has blocked connections bound for a non-default port.
 
+
+## Task 5:
+- Configured and setup a reverse proxy using nginx.
