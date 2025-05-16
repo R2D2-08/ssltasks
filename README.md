@@ -24,4 +24,5 @@ debug3: set_sock_tos: set socket 4 IP_TOS 0x48
 ```bash
 ssh -i ~/id_rsa.pem -p 2222 omar@localhost
 ```
+- - The above leads me to believe that the ISP being used by the client has blocked connections bound for a non-default port.
 
