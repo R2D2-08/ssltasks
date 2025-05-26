@@ -1,6 +1,8 @@
 # ssltasks
+**Documentation for the SSL admins' induction tasks:**
+## Task 1:
 
-
+## Task 2:
 
 ## Task 3:
 - Configured UFW to deny all incoming traffic except for SSH, HTTP, HTTTPS and SSH on port 2222.
@@ -27,5 +29,21 @@ ssh -i ~/id_rsa.pem -p 2222 omar@localhost
 - - The above leads me to believe that the ISP being used by the client has blocked connections bound for a non-default port.
 
 
+## Task 4:
+
 ## Task 5:
 - Configured and setup a reverse proxy using nginx.
+
+## Task 6:
+
+
+## Task 7:
+
+
+## Task 8:
+
+
+## Task 9:
+
+
+## Task 1:
