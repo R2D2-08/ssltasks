@@ -1,7 +1,7 @@
 # ssltasks
 **Documentation for the SSL admins' induction tasks:**
 ## Task 1:
-Configured a Standard B1 (1 vcpu, 1 GiB memory) in Azure. The operating system I chose was Linux (Ubuntu 22.04). The IPv4 public IP assigned for this instance is 74.124.224.103.
+Configured a Standard B1 (1 vcpu, 1 GiB memory) in Azure. The operating system I chose was Linux (Ubuntu 22.04). The IPv4 public IP assigned for this instance is 74.224.124.103.
 
 Commands used to update the system packages:
 ```bash
@@ -13,9 +13,15 @@ I modified the file
 - After ensuring that i have the ```unattended-upgrades``` package installed on my machine. I modified ```/etc/apt/apt.conf.d/20auto-upgrades``` to enable automatic upgrades.
   
 ## Task 2:
+Most of the changes made were in the sshd_config file. This is where most of the ssh daemon's configuration lives in.
+Disable root login by
+Disable password-based authentication by
+Enable and configure public key authentication by
 
+### Setting up fail2ban:
+- After cloning fail2ban, to set up our "jail" we edit the fail2ban configuratoi
 
-## Task 3:
+## Task 3: 
 - Configured UFW to deny all incoming traffic except for SSH, HTTP, HTTTPS and SSH on port 2222.
 ### Testing if port 222 is open to accepting SSH requests:
 ```bash
