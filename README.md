@@ -47,18 +47,28 @@ ssh -i ~/id_rsa.pem -p 2222 omar@localhost
 
 
 ## Task 4:
+Created the users and  
+Commands used:
+```bash
+useradd
+usermod
 
+```
 ## Task 5:
-- Configured and setup a reverse proxy using nginx.
+- Configured nginx as a reverse proxy that redirects http/https requests from the public internet to dedicated servers/processes.
+- This involved writing a configuration file in ```/etc/nginx/sites-available``` and making a link for the same file in ```/etc/nginx/sites-enabled```.
+- A strict CSP is written in these configuration files to mitigate XSS attacks. 
 
 ## Task 6:
-
+- When running the security script ```sudo mysql_secure_installation``` after installing mariadb, an option allows you to disable remote login with a simple yes or no.
+- The backups for the database are set up by writing a script and regularly executing it using the crontab. The backups are stored in ```/var/backups/db```
 
 ## Task 7:
 
 
 ## Task 8:
-
+- 8.1 was simple.
+- 
 
 ## Task 9:
 
