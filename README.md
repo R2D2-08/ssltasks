@@ -5,24 +5,26 @@ Configured a Standard B1 (1 vcpu, 1 GiB memory) in Azure. The operating system I
 
 Commands used to update the system packages:
 ```bash
-sudo apt update
-sudo apt upgrade
+sudo apt update -y
+sudo apt upgrade -y
 ```
-### To set up unattended upgrades:
-I modified the file 
+### To set up unattended upgrades: 
 - After ensuring that i have the ```unattended-upgrades``` package installed on my machine. I modified ```/etc/apt/apt.conf.d/20auto-upgrades``` to enable automatic upgrades.
   
 ## Task 2:
 Most of the changes made were in the sshd_config file. This is where most of the ssh daemon's configuration lives in.
-Disable root login by
-Disable password-based authentication by
-Enable and configure public key authentication by
+Disable root login by ```PermitRootLogin no```
+Disable password-based authentication by ```PasswordAuthentication no```
+Enable and configure public key authentication by 
 
 ### Setting up fail2ban:
-- After cloning fail2ban, to set up our "jail" we edit the fail2ban configuratoi
-
+- After cloning fail2ban, to set up our "jail" we edit the fail2ban configuration file (```/etc/fail2ban/jail.local```)
+- This is where we enable the jail under ```[sshd]```.
+ 
 ## Task 3: 
 - Configured UFW to deny all incoming traffic except for SSH, HTTP, HTTTPS and SSH on port 2222.
+- sudo ufw default deny incoming, sudo ufw default allow outgoing, sudo ufw allow http/tcp https/tcp ssh/tcp 2222/tcp
+  
 ### Testing if port 222 is open to accepting SSH requests:
 ```bash
 ssh -vvv -i ~/.ssh/id_rsa.pem -p 2222 omar@74.224.124.103
@@ -50,10 +52,11 @@ ssh -i ~/id_rsa.pem -p 2222 omar@localhost
 Created the users and  
 Commands used:
 ```bash
-useradd
-usermod
-
+sudo useradd thisuser
+sudo usermod -aG thisgroup thisuser
 ```
+Cron job to backup the user directories.
+
 ## Task 5:
 - Configured nginx as a reverse proxy that redirects http/https requests from the public internet to dedicated servers/processes.
 - This involved writing a configuration file in ```/etc/nginx/sites-available``` and making a link for the same file in ```/etc/nginx/sites-enabled```.
@@ -62,12 +65,12 @@ usermod
 ## Task 6:
 - When running the security script ```sudo mysql_secure_installation``` after installing mariadb, an option allows you to disable remote login with a simple yes or no.
 - The backups for the database are set up by writing a script and regularly executing it using the crontab. The backups are stored in ```/var/backups/db```
-
+  
 ## Task 7:
-
+Installed wireguard on the client and server. And generating the public keys in both the client and server, for the server, write the VPN configuration in ```/etc/wireguard/wg0.conf```. We add the public keys of clients under the [Peer] header.
 
 ## Task 8:
-- 8.1 was simple.
+- Once docker is set up, after installation, the Dockerfile is used to build a container that will be proxied http traffic from the server to the container which inturn will be forwarded to the container hosting the portfolio. 
 - 
 
 ## Task 9:
