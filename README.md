@@ -24,15 +24,17 @@ ssh -vvv -i ~/.ssh/id_rsa.pem -p 2222 omar@74.224.124.103
 ```
 - - The log would simply halt with the following log:
 ```bash
-OpenSSH_9.9p1, OpenSSL 3.2.3 3 Sep 2024
+OpenSSH_9.6p1 Ubuntu-3ubuntu13.11, OpenSSL 3.0.13 30 Jan 2024
 debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: /etc/ssh/ssh_config line 19: include /etc/ssh/ssh_config.d/*.conf matched no files
+debug1: /etc/ssh/ssh_config line 21: Applying options for *
 debug2: resolve_canonicalize: hostname 74.224.124.103 is address
-debug3: expanded UserKnownHostsFile '~/.ssh/known_hosts' -> '/c/Users/Omarn/.ssh/known_hosts'
-debug3: expanded UserKnownHostsFile '~/.ssh/known_hosts2' -> '/c/Users/Omarn/.ssh/known_hosts2'
+debug3: expanded UserKnownHostsFile '~/.ssh/known_hosts' -> '/home/r2d2/.ssh/known_hosts'
+debug3: expanded UserKnownHostsFile '~/.ssh/known_hosts2' -> '/home/r2d2/.ssh/known_hosts2'
 debug3: channel_clear_timeouts: clearing
 debug3: ssh_connect_direct: entering
 debug1: Connecting to 74.224.124.103 [74.224.124.103] port 2222.
-debug3: set_sock_tos: set socket 4 IP_TOS 0x48
+debug3: set_sock_tos: set socket 3 IP_TOS 0x10
 ```
 - - Tried SSH-ing into the server using an open session in the server via port 2222. This worked.
 ```bash
