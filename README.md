@@ -17,31 +17,7 @@ Most of the changes made were in the sshd_config file. This is where the ssh dae
 ## Task 3: 
 - Configured UFW to deny all incoming traffic except for SSH, HTTP, HTTTPS and SSH on port 2222.
 - To deny incoming traffic, allow outgoing traffic, set up my own firewall: ```sudo ufw default deny incoming; sudo ufw default allow outgoing; sudo ufw allow http/tcp https/tcp ssh/tcp 2222/tcp```
-  
-### Testing if port 2222 is open to accepting SSH requests:
-```bash
-ssh -vvv -i ~/.ssh/id_rsa.pem -p 2222 omar@74.224.124.103
-```
-- - The log would simply halt with the following log:
-```bash
-OpenSSH_9.6p1 Ubuntu-3ubuntu13.11, OpenSSL 3.0.13 30 Jan 2024
-debug1: Reading configuration data /etc/ssh/ssh_config
-debug1: /etc/ssh/ssh_config line 19: include /etc/ssh/ssh_config.d/*.conf matched no files
-debug1: /etc/ssh/ssh_config line 21: Applying options for *
-debug2: resolve_canonicalize: hostname 74.224.124.103 is address
-debug3: expanded UserKnownHostsFile '~/.ssh/known_hosts' -> '/home/r2d2/.ssh/known_hosts'
-debug3: expanded UserKnownHostsFile '~/.ssh/known_hosts2' -> '/home/r2d2/.ssh/known_hosts2'
-debug3: channel_clear_timeouts: clearing
-debug3: ssh_connect_direct: entering
-debug1: Connecting to 74.224.124.103 [74.224.124.103] port 2222.
-debug3: set_sock_tos: set socket 3 IP_TOS 0x10
-```
-- - Tried SSH-ing into the server using an open session in the server via port 2222. This worked.
-```bash
-ssh -i ~/id_rsa.pem -p 2222 omar@localhost
-```
-- - The above leads me to believe that the ISP being used by the client has blocked connections bound for a non-default port.
-
+- Even with UFW configued to allow certain traffic, the Azure network firewall required me to add rules on the Azure portal to allow traffic through port 2222 for non-default ssh, 51820 for wireguard traffic, 80 for http traffic, 443 for https traffic. 
 
 ## Task 4:
 Created the users and change the permissions as required.
@@ -62,10 +38,10 @@ To Configure nginx as a reverse proxy that redirects http/https requests from th
 - Generated the public keys in both the client and server.
 - Then for the server, I wrote the VPN configuration in ```/etc/wireguard/wg0.conf```.
 - To allow traffic to be tunnelled from the client to the server, they must be aware of each other, hence, I added the public keys of clients under the [Peer] header and the public key of the server in the client's configuration file.
-- For the client(s) write the configuration in the same directory (```client.conf```).  There I specified the public IP address of the server along with the server's wireguard public key as mentioned above.
+- For the client(s) write the configuration in the same directory (```user.conf```).  There I specified the public IP address of the server along with the server's wireguard public key as mentioned above.
 
 ## Task 8:
 - Once docker is set up, after installation, the Dockerfile is used to build a container that will be proxied http traffic from the server which inturn will be forwarded to the localhost, which is hosting the portfolio (I'm not entirely sure if what I just stated is entirely true in terms of the terminology). 
 
 ## Task 9:
-
+- I wrote 2 Dockerfiles, one for the control node and another for all the target nodes. Following this, I used docker to build 3 containers (1 control, 2 target). I then 'went' into the control node and wrote a basic playbook to accomplish the tasks mentioned under 9.1 in the tasks document.
