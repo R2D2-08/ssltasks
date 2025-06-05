@@ -5,7 +5,7 @@ Configured a Standard B1 (1 vcpu, 1 GiB memory) in Azure. The operating system I
 
 ### To set up unattended upgrades: 
 - After ensuring that i have the ```unattended-upgrades``` package installed on my machine. I modified ```/etc/apt/apt.conf.d/20auto-upgrades``` to enable automatic upgrades.
-- Since the above is for security packages, I additionally added a cronjob that updates and upgrades all the system packages everyday.
+- Since the above is for security packages, I additionally added a cronjob that updates and upgrades all the system packages everyday. [References](https://www.youtube.com/watch?v=2Btkx9toufg).
 
 ## Task 2:
 Most of the changes made were in the sshd_config file. This is where the ssh daemon's configuration lives in.
