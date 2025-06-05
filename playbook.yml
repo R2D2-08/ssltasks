@@ -1,0 +1,23 @@
+---
+- name: Normal checks
+  hosts: target_nodes
+  become: false
+  tasks:
+    - name: pingg
+      ansible.builtin.ping:
+
+    - name: disk space check
+      ansible.builtin.shell: df -h
+      register: disk_out
+
+    - name: disk output
+      ansible.builtin.debug:
+        var: disk_out.stdout_lines
+
+    - name: sys uptime
+      ansible.builtin.command: uptime
+      register: uptime_out
+
+    - name: uptime output
+      ansible.builtin.debug:
+        var: uptime_out.stdout

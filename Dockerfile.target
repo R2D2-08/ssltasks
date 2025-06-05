@@ -1,0 +1,8 @@
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC
+RUN apt-get update && apt-get install -y openssh-server sudo tzdata
+RUN mkdir /var/run/sshd
+RUN useradd -ms /bin/bash ansible && echo "ansible:ansible" | chpasswd && adduser ansible sudo
+RUN echo "ansible ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]
