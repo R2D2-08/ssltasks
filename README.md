@@ -5,23 +5,32 @@ Configured a Standard B1 (1 vcpu, 1 GiB memory) in Azure. The operating system I
 
 ### To set up unattended upgrades: 
 - After ensuring that i have the ```unattended-upgrades``` package installed on my machine. I modified ```/etc/apt/apt.conf.d/20auto-upgrades``` to enable automatic upgrades.
-  
+- Since the above is for security packages, I additionally added a cronjob that updates and upgrades all the system packages everyday.
+
 ## Task 2:
 Most of the changes made were in the sshd_config file. This is where the ssh daemon's configuration lives in.
 - Disabling root login, password-based authentication and enabling public key auth is all done in the above specified file (```/etc/sshd/sshd_config```).
+- I didn't restrict the SSH access to a range of IP addresses because my router sits behind CGNAT. 
 
 ### Setting up fail2ban:
-- After cloning fail2ban, to set up our "jail" we edit the fail2ban configuration file (```/etc/fail2ban/jail.local```)
-- This is where we enable the jail under ```[sshd]```.
+- After cloning fail2ban, to configure the "jail", I edited the fail2ban configuration file (```/etc/fail2ban/jail.local```)
+- This is where I enabled the jail under ```[sshd]``` with relevant options to set the options of the jail.
  
 ## Task 3: 
 - Configured UFW to deny all incoming traffic except for SSH, HTTP, HTTTPS and SSH on port 2222.
 - To deny incoming traffic, allow outgoing traffic, set up my own firewall: ```sudo ufw default deny incoming; sudo ufw default allow outgoing; sudo ufw allow http/tcp https/tcp ssh/tcp 2222/tcp```
 - Even with UFW configued to allow certain traffic, the Azure network firewall required me to add rules on the Azure portal to allow traffic through port 2222 for non-default ssh, 51820 for wireguard traffic, 80 for http traffic, 443 for https traffic. 
+- I read up a bit about IP-tables, mainly from this [article](https://medium.com/skilluped/what-is-iptables-and-how-to-use-it-781818422e52).
 
 ## Task 4:
-Created the users and change the permissions as required.
-- Write a backup script to backup the exam_* users' directories evrey day. Use a cron job for the regularly timed backups.
+Created the users and changed the permissions as required. Created a group ```auditors``` of which, examaudit is a part of. This is done to give examaudit read access to the home directories of the users with usernames: exam_1, exam_2 & exam_3.
+- To enable quotas on the space used by these users, I faced a bit of complication as described below:
+    - Firstly, I edited the ```/etc/fstab``` file and added ```userquota,grpquota``` to the line with the root filesystem.
+    - I then remounted the root filesystem and performed a quotacheck but I kept encountering errors. Addtionally, the person using the computer in the video I was referring to implement disk quotas hadn't encountered any issues. [source](https://www.youtube.com/watch?v=blMuxCTTnvg)
+    - Some of the errors that kept popping up were concerned with how I do not have the 'quota' kernel module installed or complied on my instance. 
+    - The error turned out to be in my deprecated implementation of disk quotas. I found the implementation that worked for me (here)[https://askubuntu.com/questions/575967/how-do-i-set-up-user-quotas-limits-on-the-file-system].
+    - I then added a 256 MB, 1024 MB and 1024 soft limit on exam_1, exam_2 and exam_3 respectively, with the corresponding hard limits being approximately 10% more than the soft limits.
+- Following that, I  wrote a simple backup script to backup the exam_* users' directories evrey day and automated that process using a cronjob.
 
 ## Task 5:
 To Configure nginx as a reverse proxy that redirects http/https requests from the public internet to dedicated servers/processes.
