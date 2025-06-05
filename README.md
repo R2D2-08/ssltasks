@@ -40,23 +40,32 @@ To Configure nginx as a reverse proxy that redirects http/https requests from th
 - To run [app1](https://do.edvinbasil.com/ssl/app) and [issslopen](https://gitlab.com/tellmeY/issslopen), I created a non-privileged user 'webapprunner' with the password 'webapprunner'.
 - To print ```/server1/``` for ```https://x.ssl.airno.de/server1/```, I added a block inside the configuration file that redirects traffic from port 443 on the host with the url "/*" to port 8008 on the localhost. Similarlly, to print ```/``` for ```https://x.ssl.airno.de/server2/```, I added a block to specifically redirect traffic from port 443 on the host with the url "/server2/*" to port 8008 on the localhost.
 - The same block-based redirection logic was used to redirect traffic from port 443 on the host with the url "/sslopen*" to port 3000 on the localhost for the "issslopen" app.
-- Since all of these redirect only https requests to their relevant proxy 'servers', I added an additional block inside the configuration file to enforce the upgradation of all http connections to https connections. 
+- Since all of these redirect only https requests to their relevant proxy 'servers', I added an additional block inside the configuration file to enforce the upgradation of all http requests to https requests.
+- The token I appeneded to the list of tokens in the .env file is ```SSL-Admin:thetokenoftheadmin```. 
   - Note that, to allow https traffic I generated a self signed certificate following this [tutorial](https://stackoverflow.com/questions/10175812/how-can-i-generate-a-self-signed-ssl-certificate-using-openssl). 
 
 ## Task 6:
 - When running the security script ```sudo mysql_secure_installation``` after installing mariadb, an option allows you to disable remote login with a simple yes or no, so I used that to disable remote login.
 - I created a user named 'this_user' with the password 'this_user' with minimal options to interact with the ```secure_onboarding``` database.
-- The backups for the database are stored using a cron job that executes a script regularly. The backups are stored in ```/var/backups/db```.
+- The backups for the database are created and stored using a simple script that is automated using a cron job that executes everyday. The backups are stored in ```/var/backups/db```.
   
 ## Task 7:
 - Firstly, I installed wireguard on both the client and server (I used my personal laptop as the client).
-- Generated the public keys in both the client and server.
+- I then generated the public keys in both the client and server.
 - Then for the server, I wrote the VPN configuration in ```/etc/wireguard/wg0.conf```.
-- To allow traffic to be tunnelled from the client to the server, they must be aware of each other, hence, I added the public keys of clients under the [Peer] header and the public key of the server in the client's configuration file.
-- For the client(s) write the configuration in the same directory (```user.conf```).  There I specified the public IP address of the server along with the server's wireguard public key as mentioned above.
+- To allow traffic to be tunnelled from the client to the server, they must be aware of each other, hence, I added the public key of my laptop (the client) under the [Peer] header and the public key of the server in the client's configuration file.
+- For the client(s), I wrote the configuration in the same directory in the file: (```user.conf```).  There I specified the public IP address of the server along with the server's wireguard public key as mentioned above.
+- I've attached all the necessary files to configure an 'admin client' as requested for in the tasks' document.
 
 ## Task 8:
-- Once docker is set up, after installation, the Dockerfile is used to build a container that will be proxied http traffic from the server which inturn will be forwarded to the localhost, which is hosting the portfolio (I'm not entirely sure if what I just stated is entirely true in terms of the terminology). 
-
+- After installing docker, enabling it using systemctl and testing it, I transferred a veryyy basic HTML only portfolio website to a volume I created.
+- I then set up a systemd service by following [this tutorial](https://documentation.suse.com/smart/systems-management/html/systemd-setting-up-service/index.html). As specified in the now set-up systemd service, a new container is run everytime the container crashes or the system reboots. The container is configured in the same ```portfolio.server``` file to pull alpine and mount the previously cerated volume at the directory: ```/usr/share/nginx/html``` to serve the portfolio content.
+- The hosts' nginx configuration file is modified to include an additional block that is responsible for redirecting all https traffic with the url ```/portfolio``` to port 8080 on the host that is bound to port 80 on the container.
+- Since the docker volume exists on the hosts file system under the ```/var/lib/docker/volumes``` directory, I changed the access and permissions of the desired volume here.
+   
 ## Task 9:
-- I wrote 2 Dockerfiles, one for the control node and another for all the target nodes. Following this, I used docker to build 3 containers (1 control, 2 target). I then 'went' into the control node and wrote a basic playbook to accomplish the tasks mentioned under 9.1 in the tasks document.
+- Created the network ```ansible-net```. This is the network all the containers will be working inside of.
+- I wrote 2 Dockerfiles, one for the control node and another for all the target nodes. Both of these pull Ubuntu and install a couple of dependencies.
+- I then built the control-node image and the target-node image from these Dockerfiles. But, building this image in the server crashed it multiple times... with less than half of available RAM left to build an image whose size itself was close to 1 GB, I figured I had no option other than to simply not build and run these containers on the server. So, I built and ran them on my laptop.
+- I first generate a ssh key-pair using ```ssh-keygen```. Inspecting the network, I use the local IP addresses of the target containers to copy the public key of the control container into them using ```ssh-copy-id```. I can now freely ssh in and out of the target containers.
+- Next, I wrote an ```inventory.ini``` file to specify the details of the target_nodes. I also wrote a simple ```playbook.yml``` file to ping the targets, check the free disk space of the targets and print the latter & show the uptime + display it. [source](https://spacelift.io/blog/ansible-playbooks) 
