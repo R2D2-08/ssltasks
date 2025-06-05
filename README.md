@@ -28,19 +28,25 @@ Created the users and changed the permissions as required. Created a group ```au
     - Firstly, I edited the ```/etc/fstab``` file and added ```userquota,grpquota``` to the line with the root filesystem.
     - I then remounted the root filesystem and performed a quotacheck but I kept encountering errors. Addtionally, the person using the computer in the video I was referring to implement disk quotas hadn't encountered any issues. [source](https://www.youtube.com/watch?v=blMuxCTTnvg)
     - Some of the errors that kept popping up were concerned with how I do not have the 'quota' kernel module installed or complied on my instance. 
-    - The error turned out to be in my deprecated implementation of disk quotas. I found the implementation that worked for me (here)[https://askubuntu.com/questions/575967/how-do-i-set-up-user-quotas-limits-on-the-file-system].
+    - The error turned out to be in my deprecated implementation of disk quotas. I found the implementation that worked for me [here](https://askubuntu.com/questions/575967/how-do-i-set-up-user-quotas-limits-on-the-file-system).
     - I then added a 256 MB, 1024 MB and 1024 soft limit on exam_1, exam_2 and exam_3 respectively, with the corresponding hard limits being approximately 10% more than the soft limits.
 - Following that, I  wrote a simple backup script to backup the exam_* users' directories evrey day and automated that process using a cronjob.
 
 ## Task 5:
 To Configure nginx as a reverse proxy that redirects http/https requests from the public internet to dedicated servers/processes.
-- This involved writing a configuration file in ```/etc/nginx/sites-available``` and making a link for the same file in ```/etc/nginx/sites-enabled```.
-- This file specifies the redirection logic. So, whenever a http/https request is made to the server (dependent on what port the server is open to listen on), the request is forwarded to the dedicated process based on the nginx configuration present in ```/etc/nginx/sites-enabled```.
-- Defined a strict CSP in the configuration file to mitigate XSS attacks. 
+- This involved writing a configuration file in ```/etc/nginx/sites-available``` and making a link for the same file in ```/etc/nginx/sites-enabled```. Once linked and having tested the configuration, followed up by reloading nginx, I was able to configure a basic reverse-proxy that redirected to the default nginx html page.
+- The configuration written in the ```/etc/nginx/sites-available``` file defines the redirection logic (this is what I have assumed it does). So, whenever a http/https request is made to the server (dependent on what port the server is open to listen on), the request is forwarded to the dedicated process based on the nginx configuration present in the config file.
+- With a need to upgrade to https and a moderate CSP (a very strict one wouldn't load the static html from different directories or smtg), relevant headers were added to the same configuration file.
+- To run [app1](https://do.edvinbasil.com/ssl/app) and [issslopen](https://gitlab.com/tellmeY/issslopen), I created a non-privileged user 'webapprunner' with the password 'webapprunner'.
+- To print ```/server1/``` for ```https://x.ssl.airno.de/server1/```, I added a block inside the configuration file that redirects traffic from port 443 on the host with the url "/*" to port 8008 on the localhost. Similarlly, to print ```/``` for ```https://x.ssl.airno.de/server2/```, I added a block to specifically redirect traffic from port 443 on the host with the url "/server2/*" to port 8008 on the localhost.
+- The same block-based redirection logic was used to redirect traffic from port 443 on the host with the url "/sslopen*" to port 3000 on the localhost for the "issslopen" app.
+- Since all of these redirect only https requests to their relevant proxy 'servers', I added an additional block inside the configuration file to enforce the upgradation of all http connections to https connections. 
+  - Note that, to allow https traffic I generated a self signed certificate following this [tutorial](https://stackoverflow.com/questions/10175812/how-can-i-generate-a-self-signed-ssl-certificate-using-openssl). 
 
 ## Task 6:
 - When running the security script ```sudo mysql_secure_installation``` after installing mariadb, an option allows you to disable remote login with a simple yes or no, so I used that to disable remote login.
-- The backups for the database are stored using a cron job that executes a script regularly. The backups are stored in ```/var/backups/db```
+- I created a user named 'this_user' with the password 'this_user' with minimal options to interact with the ```secure_onboarding``` database.
+- The backups for the database are stored using a cron job that executes a script regularly. The backups are stored in ```/var/backups/db```.
   
 ## Task 7:
 - Firstly, I installed wireguard on both the client and server (I used my personal laptop as the client).
